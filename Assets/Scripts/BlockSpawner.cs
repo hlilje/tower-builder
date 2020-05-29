@@ -3,10 +3,10 @@
 public class BlockSpawner : MonoBehaviour {
     public GameObject prefab;
 
-    private float _blockHeight;
+    private const float _speed = 2.0f;
+    private const int _sideLimits = 2;
 
-    private float _speed = 2.0f;
-    private int _sideLimits = 2;
+    private float _blockHeight;
     private int _direction = 1;
 
     private void Start() {

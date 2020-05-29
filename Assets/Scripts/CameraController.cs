@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour {
+    private const float _speed = 10.0f;
+    private const float _groundOffset = 0.2f;
+
     private Vector3 _position;
-    private float _groundOffset = 0.2f;
-    private float _speed = 10.0f;
     private bool _free = false;
 
     private void Start() {
