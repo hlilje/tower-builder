@@ -5,22 +5,20 @@ using UnityEngine;
 public class BlockSpawner : MonoBehaviour {
     public GameObject prefab;
 
-    private int blockHeight = 1; // TODO: Base off mesh size
+    private float blockHeight;
+
+    private float Speed = 2.0f;
     private int sideLimits = 2;
     private int direction = 1;
-    private float Speed = 2;
 
-    void Start() {
-        Debug.Log("BlockSpawner");
+    private void Start() {
+        blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
 
-        GameObject parent = Instantiate(prefab, transform.position, Quaternion.identity);
-        parent.transform.parent = transform;
-        parent.GetComponent<Rigidbody>().isKinematic = true;
-
-        // TODO: Pre-spawn initial block
+        SpawnParentBlock();
+        //SpawnInitBlock();
     }
 
-    void Update() {
+    private void Update() {
         UpdatePosition();
 
         if (Input.GetKeyDown(KeyCode.Q)) {
@@ -28,7 +26,23 @@ public class BlockSpawner : MonoBehaviour {
         }
     }
 
-    void UpdatePosition() {
+    private void SpawnParentBlock()
+    {
+        GameObject parent = Instantiate(prefab, transform.position, Quaternion.identity);
+        parent.transform.parent = transform;
+        parent.GetComponent<Rigidbody>().isKinematic = true;
+    }
+
+    private void SpawnInitBlock()
+    {
+        GameObject ground = GameObject.Find("Ground");
+        Vector3 groundPos = ground.transform.position;
+        Vector3 initPos = transform.position;
+        initPos.y -= groundPos.y;
+        Instantiate(prefab, initPos, Quaternion.identity);
+    }
+
+    private void UpdatePosition() {
         Vector3 position = transform.position;
         position.x += direction * (Speed * Time.deltaTime);
         if (position.x <= -sideLimits || position.x >= sideLimits)
@@ -39,7 +53,7 @@ public class BlockSpawner : MonoBehaviour {
         transform.position = position;
     }
 
-    void SpawnBlock() {
+    private void SpawnBlock() {
         Instantiate(prefab, transform.position, Quaternion.identity);
 
         Vector3 position = transform.position;

@@ -4,14 +4,7 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    void Start() {
-        Debug.Log("Block");
-    }
-
-    void Update() {
-    }
-
-    void OnCollisionEnter(Collision collider) {
+    private void OnCollisionEnter(Collision collider) {
         Debug.Log("Collision");
 
         if (collider.gameObject.tag == "Block") {
