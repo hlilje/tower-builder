@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class BlockSpawner : MonoBehaviour {
-    public GameObject _prefab;
+    public GameObject prefab;
 
     private float _blockHeight;
 
@@ -10,7 +10,7 @@ public class BlockSpawner : MonoBehaviour {
     private int _direction = 1;
 
     private void Start() {
-        _blockHeight = _prefab.GetComponent<Renderer>().bounds.size.x;
+        _blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
 
         SpawnParentBlock();
         SpawnInitBlock();
@@ -37,7 +37,7 @@ public class BlockSpawner : MonoBehaviour {
 
     private void SpawnParentBlock()
     {
-        GameObject parent = Instantiate(_prefab, transform.position, Quaternion.identity);
+        GameObject parent = Instantiate(prefab, transform.position, Quaternion.identity);
         parent.transform.parent = transform;
         parent.GetComponent<Rigidbody>().isKinematic = true;
     }
@@ -48,13 +48,13 @@ public class BlockSpawner : MonoBehaviour {
         Vector3 groundPos = ground.transform.position;
         Vector3 initPos = transform.position;
         initPos.y = groundPos.y;
-        Instantiate(_prefab, initPos, Quaternion.identity);
+        Instantiate(prefab, initPos, Quaternion.identity);
 
         // TODO: Anchor to ground
     }
 
     private void SpawnBlock() {
-        Instantiate(_prefab, transform.position, Quaternion.identity);
+        Instantiate(prefab, transform.position, Quaternion.identity);
 
         Vector3 position = transform.position;
         position.y += _blockHeight;
