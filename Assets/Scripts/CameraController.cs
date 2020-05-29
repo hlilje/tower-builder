@@ -1,12 +1,22 @@
 ﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour {
+    private Vector3 _position;
     private float _groundOffset = 0.2f;
     private float _speed = 10.0f;
     private bool _free = false;
 
+    private void Start() {
+        _position = transform.position;
+    }
+
     private void Update() {
         UpdatePosition();
+
+        if (Input.GetKeyDown(Key.cameraReset)) {
+            transform.position = _position;
+            _free = false;
+        }
 
         if (Input.GetKeyDown(Key.cameraFree)) {
             _free = !_free;
@@ -38,6 +48,8 @@ public class CameraController : MonoBehaviour {
     }
 
     public void OnBlockSpawned(float blockHeight) {
+        _position.y += blockHeight;
+
         if (!_free) {
             Vector3 position = transform.position;
             position.y += blockHeight;
