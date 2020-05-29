@@ -2,13 +2,13 @@
 
 public class CameraController : MonoBehaviour
 {
-    private float groundOffset = 0.2f;
-    private float speed = 10.0f;
+    private float _groundOffset = 0.2f;
+    private float _speed = 10.0f;
 
     private void Update()
     {
         Vector3 position = transform.position;
-        float delta = Time.deltaTime * speed;
+        float delta = Time.deltaTime * _speed;
 
         if (Input.GetKey(Key.cameraModifier)) {
             if (Input.GetKey(Key.cameraUp)) {
@@ -16,8 +16,8 @@ public class CameraController : MonoBehaviour
             } else if (Input.GetKey(Key.cameraDown)) {
                 GameObject ground = GameObject.Find(Object.ground);
                 position.y -= delta;
-                float limit = ground.transform.position.y + groundOffset;
-                position.y = Mathf.Max(position.y, groundOffset);
+                float limit = ground.transform.position.y + _groundOffset;
+                position.y = Mathf.Max(position.y, _groundOffset);
             }
         } else {
             if (Input.GetKey(Key.cameraForward)) {
