@@ -47,8 +47,6 @@ public class BlockSpawner : MonoBehaviour {
         transform.position = position;
 
         GameObject camera = GameObject.Find("Main Camera");
-        Vector3 cameraPos = camera.transform.position;
-        cameraPos.y += blockHeight;
-        camera.transform.position = cameraPos;
+        camera.GetComponent<CameraController>().OnBlockSpawned(blockHeight);
     }
 }
