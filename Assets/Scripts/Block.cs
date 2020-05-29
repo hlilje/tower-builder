@@ -34,7 +34,7 @@ public class Block : MonoBehaviour {
                 Debug.Log("Attached with FixedJoint");
 
                 gameObject.AddComponent<FixedJoint>();
-                gameObject.GetComponent<FixedJoint>().connectedBody = collision.rigidbody;
+                gameObject.GetComponent<FixedJoint>().connectedBody = GetComponent<Rigidbody>();
             }
         } else {
             Debug.LogError("Collision with unknown object");
