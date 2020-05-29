@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BlockSpawner : MonoBehaviour {
     public GameObject prefab;
 
     private float blockHeight;
 
-    private float Speed = 2.0f;
+    private float speed = 2.0f;
     private int sideLimits = 2;
     private int direction = 1;
 
@@ -28,7 +26,7 @@ public class BlockSpawner : MonoBehaviour {
 
     private void UpdatePosition() {
         Vector3 position = transform.position;
-        position.x += direction * (Speed * Time.deltaTime);
+        position.x += direction * (speed * Time.deltaTime);
         if (position.x <= -sideLimits || position.x >= sideLimits)
         {
             position.x = position.x < 0 ? -sideLimits : sideLimits;
@@ -46,11 +44,13 @@ public class BlockSpawner : MonoBehaviour {
 
     private void SpawnInitBlock()
     {
-        GameObject ground = GameObject.Find("Ground");
+        GameObject ground = GameObject.Find(Object.ground);
         Vector3 groundPos = ground.transform.position;
         Vector3 initPos = transform.position;
         initPos.y = groundPos.y;
         Instantiate(prefab, initPos, Quaternion.identity);
+
+        // TODO: Anchor to ground
     }
 
     private void SpawnBlock() {
@@ -60,7 +60,7 @@ public class BlockSpawner : MonoBehaviour {
         position.y += blockHeight;
         transform.position = position;
 
-        GameObject camera = GameObject.Find("Main Camera");
+        GameObject camera = GameObject.Find(Object.camera);
         camera.GetComponent<CameraController>().OnBlockSpawned(blockHeight);
     }
 }

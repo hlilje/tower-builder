@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
@@ -12,19 +10,19 @@ public class CameraController : MonoBehaviour
         Vector3 position = transform.position;
         float delta = Time.deltaTime * speed;
 
-        if (Input.GetKey("left shift")) {
-            if (Input.GetKey("up")) {
+        if (Input.GetKey(Key.cameraModifier)) {
+            if (Input.GetKey(Key.cameraUp)) {
                 position.y += delta;
-            } else if (Input.GetKey("down")) {
-                GameObject ground = GameObject.Find("Ground");
+            } else if (Input.GetKey(Key.cameraDown)) {
+                GameObject ground = GameObject.Find(Object.ground);
                 position.y -= delta;
                 float limit = ground.transform.position.y + groundOffset;
                 position.y = Mathf.Max(position.y, groundOffset);
             }
         } else {
-            if (Input.GetKey("up")) {
+            if (Input.GetKey(Key.cameraForward)) {
                 position.z += delta;
-            } else if (Input.GetKey("down")) {
+            } else if (Input.GetKey(Key.cameraBack)) {
                 position.z -= delta;
             }
         }

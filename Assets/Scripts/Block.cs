@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Block : MonoBehaviour
 {
     private void OnCollisionEnter(Collision collider) {
         Debug.Log("Collision");
 
-        if (collider.gameObject.tag == "Block") {
+        if (collider.gameObject.tag == Object.block) {
             // TODO: Attach with spring
             // TODO: Notify block spawner to increase height
             Debug.Log("Block hit!");
-        } else if (collider.gameObject.tag == "Ground") {
+        } else if (collider.gameObject.tag == Object.ground) {
             // TODO: Attach to ground
             // TODO: Notify block spawner to increase height
             Debug.Log("Ground hit!");
         } else {
-            // ASSERT
+            Debug.LogError("Collision with unknown object");
         }
     }
 }
