@@ -15,7 +15,7 @@ public class BlockSpawner : MonoBehaviour {
         blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
 
         SpawnParentBlock();
-        //SpawnInitBlock();
+        SpawnInitBlock();
     }
 
     private void Update() {
@@ -24,6 +24,17 @@ public class BlockSpawner : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Q)) {
             SpawnBlock();
         }
+    }
+
+    private void UpdatePosition() {
+        Vector3 position = transform.position;
+        position.x += direction * (Speed * Time.deltaTime);
+        if (position.x <= -sideLimits || position.x >= sideLimits)
+        {
+            position.x = position.x < 0 ? -sideLimits : sideLimits;
+            direction *= -1;
+        }
+        transform.position = position;
     }
 
     private void SpawnParentBlock()
@@ -38,19 +49,8 @@ public class BlockSpawner : MonoBehaviour {
         GameObject ground = GameObject.Find("Ground");
         Vector3 groundPos = ground.transform.position;
         Vector3 initPos = transform.position;
-        initPos.y -= groundPos.y;
+        initPos.y = groundPos.y;
         Instantiate(prefab, initPos, Quaternion.identity);
-    }
-
-    private void UpdatePosition() {
-        Vector3 position = transform.position;
-        position.x += direction * (Speed * Time.deltaTime);
-        if (position.x <= -sideLimits || position.x >= sideLimits)
-        {
-            position.x = position.x < 0 ? -sideLimits : sideLimits;
-            direction *= -1;
-        }
-        transform.position = position;
     }
 
     private void SpawnBlock() {
