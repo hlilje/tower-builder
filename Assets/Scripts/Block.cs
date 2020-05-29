@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public class Block : MonoBehaviour
-{
+public class Block : MonoBehaviour {
     private void OnCollisionEnter(Collision collider) {
         Debug.Log("Collision");
 

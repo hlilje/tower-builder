@@ -19,7 +19,7 @@ public class BlockSpawner : MonoBehaviour {
     private void Update() {
         UpdatePosition();
 
-        if (Input.GetKeyDown(KeyCode.Q)) {
+        if (Input.GetKeyDown(Key.blockSpawn)) {
             SpawnBlock();
         }
     }
@@ -27,23 +27,20 @@ public class BlockSpawner : MonoBehaviour {
     private void UpdatePosition() {
         Vector3 position = transform.position;
         position.x += _direction * (_speed * Time.deltaTime);
-        if (position.x <= -_sideLimits || position.x >= _sideLimits)
-        {
+        if (position.x <= -_sideLimits || position.x >= _sideLimits) {
             position.x = position.x < 0 ? -_sideLimits : _sideLimits;
             _direction *= -1;
         }
         transform.position = position;
     }
 
-    private void SpawnParentBlock()
-    {
+    private void SpawnParentBlock() {
         GameObject parent = Instantiate(prefab, transform.position, Quaternion.identity);
         parent.transform.parent = transform;
         parent.GetComponent<Rigidbody>().isKinematic = true;
     }
 
-    private void SpawnInitBlock()
-    {
+    private void SpawnInitBlock() {
         GameObject ground = GameObject.Find(Object.ground);
         Vector3 groundPos = ground.transform.position;
         Vector3 initPos = transform.position;

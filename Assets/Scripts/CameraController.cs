@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 
-public class CameraController : MonoBehaviour
-{
+public class CameraController : MonoBehaviour {
     private float _groundOffset = 0.2f;
     private float _speed = 10.0f;
+    private bool _free = false;
 
-    private void Update()
-    {
+    private void Update() {
+        UpdatePosition();
+
+        if (Input.GetKeyDown(Key.cameraFree)) {
+            _free = !_free;
+        }
+    }
+
+    private void UpdatePosition() {
         Vector3 position = transform.position;
         float delta = Time.deltaTime * _speed;
 
@@ -30,10 +37,11 @@ public class CameraController : MonoBehaviour
         transform.position = position;
     }
 
-    public void OnBlockSpawned(float blockHeight)
-    {
-        Vector3 position = transform.position;
-        position.y += blockHeight;
-        transform.position = position;
+    public void OnBlockSpawned(float blockHeight) {
+        if (!_free) {
+            Vector3 position = transform.position;
+            position.y += blockHeight;
+            transform.position = position;
+        }
     }
 }
