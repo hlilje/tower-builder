@@ -46,10 +46,13 @@ public class CameraController : MonoBehaviour {
                     position.y = Mathf.Max(position.y, _groundOffset);
                 }
             } else {
+                Vector3 targetPos = _blockSpawnerPosition;
+                targetPos.y = position.y;
+                Vector3 deltaVec = (position - targetPos).normalized * delta;
                 if (Input.GetKey(Key.cameraForward)) {
-                    position.z += delta;
+                    position -= deltaVec;
                 } else if (Input.GetKey(Key.cameraBack)) {
-                    position.z -= delta;
+                    position += deltaVec;
                 }
             }
 
