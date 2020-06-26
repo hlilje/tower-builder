@@ -1,10 +1,23 @@
 ﻿using UnityEngine;
 
 public class Block : MonoBehaviour {
-    private const float _jointBreakForce = 20.0f;
-
     private const int _maxContactCount = 6;
     private ContactPoint[] _contactPoints = new ContactPoint[_maxContactCount];
+
+    private const float _jointBreakForce = 20.0f;
+
+    private void AddJoint<T>(GameObject gameObject) where T : Joint {
+        if (GetComponents<Joint>().Length > 0 || gameObject.GetComponents<Joint>().Length > 0) {
+            return;
+        }
+
+        Debug.Log("Added joint of type: " + typeof(T).Name);
+
+        gameObject.AddComponent<T>();
+        T joint = gameObject.GetComponent<T>();
+        joint.connectedBody = GetComponent<Rigidbody>();
+        joint.breakForce = _jointBreakForce;
+    }
 
     private void OnCollisionEnter(Collision collision) {
         if (GetComponent<Rigidbody>().isKinematic) {
@@ -16,6 +29,9 @@ public class Block : MonoBehaviour {
             return;
         }
 
+        // TODO: Only the last dropped block and the last attached block
+        // should be able to attach
+
         // TODO: Pick a clever contact point
         Vector3 contactPoint = _contactPoints[0].point;
         GameObject gameObject = collision.gameObject;
@@ -25,26 +41,19 @@ public class Block : MonoBehaviour {
 
             // TODO: Notify block spawner to increase height
 
-            // TODO: This will add two springs for each collision
             if (!gameObject.GetComponent<Rigidbody>().isKinematic) {
-                Debug.Log("Attached to block with SpringJoint");
+                Debug.Log("Attached to block");
 
-                gameObject.AddComponent<SpringJoint>();
-                SpringJoint joint = gameObject.GetComponent<SpringJoint>();
-                joint.connectedBody = GetComponent<Rigidbody>();
-                joint.breakForce = _jointBreakForce;
+                AddJoint<SpringJoint>(gameObject);
             }
         } else if (gameObject.tag == Object.ground) {
             Debug.Log("Ground hit");
 
             // Only the first block is attached to the ground
-            if (!gameObject.GetComponent<FixedJoint>()) {
-                Debug.Log("Attached to ground with FixedJoint");
+            if (!gameObject.GetComponent<Joint>()) {
+                Debug.Log("Attached to ground");
 
-                gameObject.AddComponent<FixedJoint>();
-                FixedJoint joint = gameObject.GetComponent<FixedJoint>();
-                joint.connectedBody = GetComponent<Rigidbody>();
-                joint.breakForce = _jointBreakForce;
+                AddJoint<FixedJoint>(gameObject);
             }
         } else {
             Debug.LogError("Collision with unknown object");
@@ -52,7 +61,7 @@ public class Block : MonoBehaviour {
     }
 
     private void OnJointBreak(float breakForce) {
-        Debug.Log("Broken joint with force: " + breakForce);
+        Debug.Log("Broke joint with force: " + breakForce);
 
         // TODO: Game Over
     }

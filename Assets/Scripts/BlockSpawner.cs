@@ -13,8 +13,6 @@ public class BlockSpawner : MonoBehaviour {
         _blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
 
         SpawnParentBlock();
-        // TODO: Might be more fun without initial block?
-        //SpawnInitialBlock();
     }
 
     private void Update() {
@@ -39,14 +37,6 @@ public class BlockSpawner : MonoBehaviour {
         GameObject parent = Instantiate(prefab, transform.position, Quaternion.identity);
         parent.transform.parent = transform;
         parent.GetComponent<Rigidbody>().isKinematic = true;
-    }
-
-    private void SpawnInitialBlock() {
-        GameObject ground = GameObject.Find(Object.ground);
-        Vector3 groundPos = ground.transform.position;
-        Vector3 initPos = transform.position;
-        initPos.y = groundPos.y;
-        Instantiate(prefab, initPos, Quaternion.identity);
     }
 
     private void SpawnBlock() {
