@@ -8,6 +8,7 @@ public class BlockSpawner : MonoBehaviour {
 
     private float _blockHeight;
     private int _direction = 1;
+    private bool _paused = false;
 
     private void Start() {
         _blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
@@ -16,8 +17,14 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
-        UpdatePosition();
+        if (!_paused)
+        {
+            UpdatePosition();
+        }
 
+        if (Input.GetKeyDown(Key.pause)) {
+            _paused = !_paused;
+        }
         if (Input.GetKeyDown(Key.blockSpawn)) {
             SpawnBlock();
         }

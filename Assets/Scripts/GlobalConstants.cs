@@ -18,5 +18,6 @@ public static class Key {
     public static readonly KeyCode cameraReset = KeyCode.R;
     public static readonly KeyCode cameraFree = KeyCode.F;
 
+    public static readonly KeyCode pause = KeyCode.P;
     public static readonly KeyCode blockSpawn = KeyCode.Q;
 }
