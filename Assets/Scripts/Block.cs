@@ -12,50 +12,12 @@ public class Block : MonoBehaviour {
         _halfWidth = GetComponent<Renderer>().bounds.size.x / 2;
     }
 
-    private void AddJoint<T>(GameObject gameObject, Vector3 contactPoint, bool anchor) where T : Joint {
-        if (GetComponents<Joint>().Length > 0 || gameObject.GetComponents<Joint>().Length > 0) {
-            return;
-        }
-
-        // TODO: Visualise connection points
-
-        gameObject.AddComponent<T>();
-
-        T joint = gameObject.GetComponent<T>();
-        joint.connectedBody = GetComponent<Rigidbody>();
-        joint.breakForce = _jointBreakForce;
-        joint.autoConfigureConnectedAnchor = anchor;
-        if (anchor)
-        {
-            joint.connectedAnchor = contactPoint;
-        }
-
-        Debug.Log("Added " + typeof(T).Name + " at anchor " + joint.connectedAnchor);
-    }
-
-    private void BlockHit(Collision collision, GameObject gameObject) {
-        // TODO: Notify block spawner to increase height
-
-        Vector3 collisionPosition = collision.transform.position;
-
-        // Ensure consistency in who gets the joint
-        if (transform.position.y < collisionPosition.y) {
-            return;
-        }
-
+    private Vector3 FindClosestContactPoint(Collision collision) {
         int contacts = collision.GetContacts(_contactPoints);
-        if (contacts == 0) {
-            return;
-        }
-
-        // Naive check to ensure balanced joints
-        float distance = Mathf.Abs(transform.position.x - collisionPosition.x);
-        if (distance > _halfWidth) {
-            return;
-        }
 
         float closestContactDistance = float.MaxValue;
-        Vector3 closestContactPoint = _contactPoints[0].point;
+        Vector3 closestContactPoint = Vector3.zero;
+
         for (int i = 0; i < contacts; ++i) {
             Vector3 contactPoint = _contactPoints[i].point;
             float contactDistance = (contactPoint - transform.position).magnitude;
@@ -65,11 +27,53 @@ public class Block : MonoBehaviour {
             }
         }
 
-        if (!gameObject.GetComponent<Rigidbody>().isKinematic) {
-            Debug.Log("Attached to block");
+        return closestContactPoint;
+    }
 
-            AddJoint<SpringJoint>(gameObject, closestContactPoint, true);
+    private void AddJoint<T>(GameObject gameObject, Vector3 contactPoint, bool autoAnchor, bool breakable) where T : Joint {
+        if (GetComponents<Joint>().Length > 0 || gameObject.GetComponents<Joint>().Length > 0) {
+            return;
         }
+
+        gameObject.AddComponent<T>();
+
+        T joint = gameObject.GetComponent<T>();
+        joint.connectedBody = GetComponent<Rigidbody>();
+        joint.autoConfigureConnectedAnchor = autoAnchor;
+        if (!autoAnchor) {
+            joint.connectedAnchor = contactPoint;
+        }
+        if (breakable) {
+            joint.breakForce = _jointBreakForce;
+        }
+
+        Debug.Log("Added " + typeof(T).Name + " at anchor " + joint.connectedAnchor);
+    }
+
+    private void BlockHit(Collision collision, GameObject gameObject) {
+        if (gameObject.GetComponent<Rigidbody>().isKinematic) {
+            return;
+        }
+
+        Vector3 collisionPosition = collision.transform.position;
+
+        // Ensure consistency in who gets the joint
+        if (transform.position.y < collisionPosition.y) {
+            return;
+        }
+
+        // Naive check to ensure balanced joints
+        float distance = Mathf.Abs(transform.position.x - collisionPosition.x);
+        if (distance > _halfWidth) {
+            return;
+        }
+
+        // TODO: Notify block spawner to increase height
+
+        Vector3 contactPoint = FindClosestContactPoint(collision);
+        AddJoint<SpringJoint>(gameObject, contactPoint, true, true);
+
+        Debug.Log("Attached to block");
     }
 
     private void OnCollisionEnter(Collision collision) {
@@ -91,9 +95,9 @@ public class Block : MonoBehaviour {
 
             // Only the first block is attached to the ground
             if (!gameObject.GetComponent<Joint>()) {
-                Debug.Log("Attached to ground");
+                AddJoint<FixedJoint>(gameObject, Vector3.zero, true, false);
 
-                AddJoint<FixedJoint>(gameObject, Vector3.zero, false);
+                Debug.Log("Attached to ground");
             }
         } else {
             Debug.LogError("Collision with unknown object");

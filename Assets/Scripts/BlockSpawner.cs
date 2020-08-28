@@ -17,8 +17,7 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
-        if (!_paused)
-        {
+        if (!_paused) {
             UpdatePosition();
         }
 
