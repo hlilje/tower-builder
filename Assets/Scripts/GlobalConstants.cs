@@ -4,9 +4,14 @@
 public static class Object {
     public static readonly string game = "Game Controller";
     public static readonly string camera = "Main Camera";
+
     public static readonly string ground = "Ground";
     public static readonly string blockSpawner = "Block Spawner";
     public static readonly string block = "Block";
+
+    public static readonly string scoreText = "Score Text";
+    public static readonly string keyBindingsText = "Key Bindings Text";
+    public static readonly string notificationText = "Notification Text";
 }
 
 public static class Key {
