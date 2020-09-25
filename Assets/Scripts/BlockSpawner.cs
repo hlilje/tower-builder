@@ -3,11 +3,16 @@
 public class BlockSpawner : MonoBehaviour {
     public GameObject prefab;
 
+    private GameObject _parent;
+
     private const float _speed = 2.0f;
+    private const float _cooldown = 1.0f;
     private const int _sideLimits = 2;
 
     private float _blockHeight;
+    private float _currentCooldown;
     private int _direction = 1;
+    private bool _available = true;
     private bool _paused = false;
 
     private void Start() {
@@ -17,6 +22,9 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
+        _currentCooldown -= Time.deltaTime;
+        Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
+
         if (!_paused) {
             UpdatePosition();
         }
@@ -25,7 +33,9 @@ public class BlockSpawner : MonoBehaviour {
             _paused = !_paused;
         }
         if (Input.GetKeyDown(Key.blockSpawn)) {
-            SpawnBlock();
+            if (_available && _currentCooldown <= 0.0f) {
+                SpawnBlock();
+            }
         }
     }
 
@@ -40,19 +50,36 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void SpawnParentBlock() {
-        GameObject parent = Instantiate(prefab, transform.position, Quaternion.identity);
-        parent.transform.parent = transform;
-        parent.GetComponent<Rigidbody>().isKinematic = true;
+        _parent = Instantiate(prefab, transform.position, Quaternion.identity);
+        _parent.transform.parent = transform;
+        _parent.GetComponent<Rigidbody>().isKinematic = true;
+    }
+
+    private void SetAvailable(bool available) {
+        _available = available;
+        _parent.GetComponent<Renderer>().enabled = available;
     }
 
     private void SpawnBlock() {
         Instantiate(prefab, transform.position, Quaternion.identity);
+        SetAvailable(false);
+        _currentCooldown = _cooldown;
+    }
 
+    public void OnBlockAttached() {
         Vector3 position = transform.position;
         position.y += _blockHeight;
         transform.position = position;
 
+        SetAvailable(true);
+
         GameObject camera = GameObject.Find(Object.camera);
         camera.GetComponent<CameraController>().OnBlockSpawned(_blockHeight);
+    }
+
+    public void OnBlockMissed() {
+        SetAvailable(true);
+
+        // TODO: Game Over
     }
 }

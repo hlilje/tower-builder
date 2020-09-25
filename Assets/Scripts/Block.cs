@@ -73,6 +73,9 @@ public class Block : MonoBehaviour {
         Vector3 contactPoint = FindClosestContactPoint(collision);
         AddJoint<SpringJoint>(gameObject, contactPoint, true, true);
 
+        GameObject blockSpawner = GameObject.Find(Object.blockSpawner);
+        blockSpawner.GetComponent<BlockSpawner>().OnBlockAttached();
+
         Debug.Log("Attached to block");
     }
 
@@ -93,11 +96,17 @@ public class Block : MonoBehaviour {
         } else if (gameObject.tag == Object.ground) {
             Debug.Log("Ground hit");
 
+            BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
+
             // Only the first block is attached to the ground
             if (!gameObject.GetComponent<Joint>()) {
                 AddJoint<FixedJoint>(gameObject, Vector3.zero, true, false);
 
+                blockSpawner.OnBlockAttached();
+
                 Debug.Log("Attached to ground");
+            } else {
+                blockSpawner.OnBlockMissed();
             }
         } else {
             Debug.LogError("Collision with unknown object");
