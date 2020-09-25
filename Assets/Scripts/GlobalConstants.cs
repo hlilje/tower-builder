@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 public static class Object {
+    public static readonly string game = "Game Controller";
     public static readonly string camera = "Main Camera";
     public static readonly string ground = "Ground";
     public static readonly string blockSpawner = "Block Spawner";
@@ -18,6 +19,7 @@ public static class Key {
     public static readonly KeyCode cameraReset = KeyCode.R;
     public static readonly KeyCode cameraFree = KeyCode.F;
 
+    public static readonly KeyCode debug = KeyCode.D;
     public static readonly KeyCode pause = KeyCode.P;
     public static readonly KeyCode blockSpawn = KeyCode.Q;
 }

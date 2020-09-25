@@ -22,18 +22,21 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
-        _currentCooldown -= Time.deltaTime;
-        Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
+        bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
 
-        if (!_paused) {
+        if (debug || !_paused) {
+            _currentCooldown -= Time.deltaTime;
+            Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
+
             UpdatePosition();
         }
 
         if (Input.GetKeyDown(Key.pause)) {
             _paused = !_paused;
         }
+
         if (Input.GetKeyDown(Key.blockSpawn)) {
-            if (_available && _currentCooldown <= 0.0f) {
+            if (debug || (_available && _currentCooldown <= 0.0f )) {
                 SpawnBlock();
             }
         }

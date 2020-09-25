@@ -21,9 +21,7 @@ public class CameraController : MonoBehaviour {
         UpdatePosition();
 
         if (Input.GetKeyDown(Key.cameraReset)) {
-            transform.position = _position;
-            transform.rotation = Quaternion.identity;
-            _free = false;
+            Reset();
         }
 
         if (Input.GetKeyDown(Key.cameraFree)) {
@@ -32,6 +30,11 @@ public class CameraController : MonoBehaviour {
     }
 
     private void UpdatePosition() {
+        bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
+        if (!debug) {
+            return;
+        }
+
         float moveSpeed = CalcMoveSpeed();
         float moveDelta = Time.deltaTime * moveSpeed;
         float rotationDelta = Time.deltaTime * _rotationSpeed;
@@ -74,6 +77,12 @@ public class CameraController : MonoBehaviour {
         Vector3 targetPos = _blockSpawnerPosition;
         targetPos.y = position.y;
         return normalise ? (position - targetPos).normalized : (position - targetPos);
+    }
+
+    public void Reset() {
+        transform.position = _position;
+        transform.rotation = Quaternion.identity;
+        _free = false;
     }
 
     public void OnBlockSpawned(float blockHeight) {
