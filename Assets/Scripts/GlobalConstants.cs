@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public static class Object {
     public static readonly string game = "Game Controller";
     public static readonly string camera = "Main Camera";

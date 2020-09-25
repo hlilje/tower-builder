@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class Block : MonoBehaviour {
     private const int _maxContactCount = 6;
     private ContactPoint[] _contactPoints = new ContactPoint[_maxContactCount];
@@ -10,11 +11,61 @@ public class Block : MonoBehaviour {
     private bool _collisionTarget = false;
     private bool _abortCollision = false;
 
+
+    public bool IsCollisionTarget() {
+        return _collisionTarget;
+    }
+
+    public void SetCollisionTarget(bool target) {
+        _collisionTarget = target;
+
+        Debug.Log("New collision target: " + GetInstanceID() );
+    }
+
+    public void SetAbortCollision(bool abort) {
+        _abortCollision = abort;
+    }
+
+
     private void Start() {
         _halfWidth = GetComponent<Renderer>().bounds.size.x / 2;
 
         Debug.Log("Created block: " + GetInstanceID());
     }
+
+    private void OnCollisionEnter(Collision collision) {
+        if (GetComponent<Rigidbody>().isKinematic) {
+            return;
+        }
+
+        GameObject gameObject = collision.gameObject;
+
+        if (gameObject.tag == Object.block) {
+            Debug.Log("Block hit");
+
+            BlockHit(collision, gameObject);
+        } else if (gameObject.tag == Object.ground) {
+            Debug.Log("Ground hit");
+
+            BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
+
+            // Only the first block is attached to the ground
+            if (!gameObject.GetComponent<Joint>()) {
+                AddJoint<FixedJoint>(gameObject, Vector3.zero, true, false);
+
+                blockSpawner.OnBlockAttached();
+
+                SetCollisionTarget(true);
+
+                Debug.Log("Attached to ground");
+            } else {
+                blockSpawner.OnBlockMissed();
+            }
+        } else {
+            Debug.LogError("Collision with unknown object");
+        }
+    }
+
 
     private Vector3 FindClosestContactPoint(Collision collision) {
         int contacts = collision.GetContacts(_contactPoints);
@@ -96,56 +147,9 @@ public class Block : MonoBehaviour {
         Debug.Log("Attached to block");
     }
 
-    private void OnCollisionEnter(Collision collision) {
-        if (GetComponent<Rigidbody>().isKinematic) {
-            return;
-        }
-
-        GameObject gameObject = collision.gameObject;
-
-        if (gameObject.tag == Object.block) {
-            Debug.Log("Block hit");
-
-            BlockHit(collision, gameObject);
-        } else if (gameObject.tag == Object.ground) {
-            Debug.Log("Ground hit");
-
-            BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
-
-            // Only the first block is attached to the ground
-            if (!gameObject.GetComponent<Joint>()) {
-                AddJoint<FixedJoint>(gameObject, Vector3.zero, true, false);
-
-                blockSpawner.OnBlockAttached();
-
-                SetCollisionTarget(true);
-
-                Debug.Log("Attached to ground");
-            } else {
-                blockSpawner.OnBlockMissed();
-            }
-        } else {
-            Debug.LogError("Collision with unknown object");
-        }
-    }
-
     private void OnJointBreak(float breakForce) {
         GameObject.Find(Object.game).GetComponent<GameController>().DecreaseScore();
 
         Debug.Log("Broke joint with force: " + breakForce);
-    }
-
-    public bool IsCollisionTarget() {
-        return _collisionTarget;
-    }
-
-    public void SetCollisionTarget(bool target) {
-        _collisionTarget = target;
-
-        Debug.Log("New collision target: " + GetInstanceID() );
-    }
-
-    public void SetAbortCollision(bool abort) {
-        _abortCollision = abort;
     }
 }

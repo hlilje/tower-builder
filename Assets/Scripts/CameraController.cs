@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class CameraController : MonoBehaviour {
     private const float _baseMoveSpeed = 10.0f;
     private const float _rotationSpeed = 150.0f;
@@ -11,6 +12,24 @@ public class CameraController : MonoBehaviour {
     private Vector3 _blockSpawnerPosition;
 
     private bool _free = false;
+
+
+    public void Reset() {
+        transform.position = _position;
+        transform.rotation = Quaternion.identity;
+        _free = false;
+    }
+
+    public void OnBlockSpawned(float blockHeight) {
+        _position.y += blockHeight;
+
+        if (!_free) {
+            Vector3 position = transform.position;
+            position.y += blockHeight;
+            transform.position = position;
+        }
+    }
+
 
     private void Start() {
         _position = transform.position;
@@ -28,6 +47,7 @@ public class CameraController : MonoBehaviour {
             _free = !_free;
         }
     }
+
 
     private void UpdatePosition() {
         bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
@@ -77,21 +97,5 @@ public class CameraController : MonoBehaviour {
         Vector3 targetPos = _blockSpawnerPosition;
         targetPos.y = position.y;
         return normalise ? (position - targetPos).normalized : (position - targetPos);
-    }
-
-    public void Reset() {
-        transform.position = _position;
-        transform.rotation = Quaternion.identity;
-        _free = false;
-    }
-
-    public void OnBlockSpawned(float blockHeight) {
-        _position.y += blockHeight;
-
-        if (!_free) {
-            Vector3 position = transform.position;
-            position.y += blockHeight;
-            transform.position = position;
-        }
     }
 }
