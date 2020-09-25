@@ -7,9 +7,13 @@ public class Block : MonoBehaviour {
     private const float _jointBreakForce = 20.0f;
 
     private float _halfWidth;
+    private bool _collisionTarget = false;
+    private bool _abortCollision = false;
 
     private void Start() {
         _halfWidth = GetComponent<Renderer>().bounds.size.x / 2;
+
+        Debug.Log("Created block: " + GetInstanceID());
     }
 
     private Vector3 FindClosestContactPoint(Collision collision) {
@@ -55,24 +59,39 @@ public class Block : MonoBehaviour {
             return;
         }
 
-        Vector3 collisionPosition = collision.transform.position;
+        if (_abortCollision) {
+            _abortCollision = false;
+            return;
+        }
 
-        // Ensure consistency in who gets the joint
-        if (transform.position.y < collisionPosition.y) {
+        BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
+        Block block = gameObject.GetComponent<Block>();
+
+        if (!block.IsCollisionTarget()) {
+            if (!_collisionTarget) {
+                blockSpawner.OnBlockMissed();
+            }
             return;
         }
 
         // Naive check to ensure balanced joints
+        Vector3 collisionPosition = collision.transform.position;
         float distance = Mathf.Abs(transform.position.x - collisionPosition.x);
         if (distance > _halfWidth) {
+            blockSpawner.OnBlockMissed();
             return;
         }
 
         Vector3 contactPoint = FindClosestContactPoint(collision);
         AddJoint<SpringJoint>(gameObject, contactPoint, true, true);
 
-        GameObject blockSpawner = GameObject.Find(Object.blockSpawner);
-        blockSpawner.GetComponent<BlockSpawner>().OnBlockAttached();
+        // Avoid flip-flopping during the collison update
+        block.SetAbortCollision(true);
+
+        block.SetCollisionTarget(false);
+        SetCollisionTarget(true);
+
+        blockSpawner.OnBlockAttached();
 
         Debug.Log("Attached to block");
     }
@@ -81,9 +100,6 @@ public class Block : MonoBehaviour {
         if (GetComponent<Rigidbody>().isKinematic) {
             return;
         }
-
-        // TODO: Only the last dropped block and the last attached block
-        // should be able to attach
 
         GameObject gameObject = collision.gameObject;
 
@@ -102,6 +118,8 @@ public class Block : MonoBehaviour {
 
                 blockSpawner.OnBlockAttached();
 
+                SetCollisionTarget(true);
+
                 Debug.Log("Attached to ground");
             } else {
                 blockSpawner.OnBlockMissed();
@@ -112,8 +130,22 @@ public class Block : MonoBehaviour {
     }
 
     private void OnJointBreak(float breakForce) {
-        Debug.Log("Broke joint with force: " + breakForce);
+        GameObject.Find(Object.game).GetComponent<GameController>().DecreaseScore();
 
-        // TODO: Game Over
+        Debug.Log("Broke joint with force: " + breakForce);
+    }
+
+    public bool IsCollisionTarget() {
+        return _collisionTarget;
+    }
+
+    public void SetCollisionTarget(bool target) {
+        _collisionTarget = target;
+
+        Debug.Log("New collision target: " + GetInstanceID() );
+    }
+
+    public void SetAbortCollision(bool abort) {
+        _abortCollision = abort;
     }
 }

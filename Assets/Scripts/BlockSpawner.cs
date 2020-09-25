@@ -22,21 +22,20 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
-        bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
+        if (Input.GetKeyDown(Key.pause)) {
+            _paused = !_paused;
+        }
 
-        if (debug || !_paused) {
+        if (!_paused) {
             _currentCooldown -= Time.deltaTime;
             Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
 
             UpdatePosition();
         }
 
-        if (Input.GetKeyDown(Key.pause)) {
-            _paused = !_paused;
-        }
-
         if (Input.GetKeyDown(Key.blockSpawn)) {
-            if (debug || (_available && _currentCooldown <= 0.0f )) {
+            bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
+            if (debug || (!_paused && _available && _currentCooldown <= 0.0f )) {
                 SpawnBlock();
             }
         }
@@ -78,13 +77,17 @@ public class BlockSpawner : MonoBehaviour {
 
         SetAvailable(true);
 
-        GameObject camera = GameObject.Find(Object.camera);
-        camera.GetComponent<CameraController>().OnBlockSpawned(_blockHeight);
+        CameraController camera = GameObject.Find(Object.camera).GetComponent<CameraController>();
+        camera.OnBlockSpawned(_blockHeight);
+
+        GameObject.Find(Object.game).GetComponent<GameController>().IncreaseScore();
     }
 
     public void OnBlockMissed() {
         SetAvailable(true);
 
-        // TODO: Game Over
+        GameObject.Find(Object.game).GetComponent<GameController>().DecreaseScore();
+
+        Debug.Log("Block missed");
     }
 }
