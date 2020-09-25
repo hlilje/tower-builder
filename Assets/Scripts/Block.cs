@@ -68,8 +68,6 @@ public class Block : MonoBehaviour {
             return;
         }
 
-        // TODO: Notify block spawner to increase height
-
         Vector3 contactPoint = FindClosestContactPoint(collision);
         AddJoint<SpringJoint>(gameObject, contactPoint, true, true);
 

@@ -55,7 +55,9 @@ public class BlockSpawner : MonoBehaviour {
     private void SpawnParentBlock() {
         _parent = Instantiate(prefab, transform.position, Quaternion.identity);
         _parent.transform.parent = transform;
-        _parent.GetComponent<Rigidbody>().isKinematic = true;
+        Rigidbody rigidbody = _parent.GetComponent<Rigidbody>();
+        rigidbody.isKinematic = true;
+        rigidbody.detectCollisions = false;
     }
 
     private void SetAvailable(bool available) {
