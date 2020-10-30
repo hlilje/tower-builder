@@ -148,8 +148,6 @@ public class Block : MonoBehaviour {
     }
 
     private void OnJointBreak(float breakForce) {
-        GameObject.Find(Object.game).GetComponent<GameController>().DecreaseScore();
-
         Debug.Log("Broke joint with force: " + breakForce);
     }
 }

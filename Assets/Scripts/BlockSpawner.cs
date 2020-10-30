@@ -33,7 +33,7 @@ public class BlockSpawner : MonoBehaviour {
     public void OnBlockMissed() {
         SetAvailable(true);
 
-        GameObject.Find(Object.game).GetComponent<GameController>().DecreaseScore();
+        GameObject.Find(Object.game).GetComponent<GameController>().DecreaseLives();
 
         Debug.Log("Block missed");
     }

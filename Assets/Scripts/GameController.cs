@@ -21,13 +21,12 @@ public class GameController : MonoBehaviour {
         Debug.Log("Gained score");
     }
 
-    public void DecreaseScore() {
-        --_score;
+    public void DecreaseLives() {
         --_lives;
 
-        SetScoreText();
+        SetLivesText();
 
-        Debug.Log("Lost score");
+        Debug.Log("Lost life");
 
         if (_lives == 0) {
             SetText(Object.notificationText, "GAME OVER");
@@ -37,6 +36,8 @@ public class GameController : MonoBehaviour {
 
     private void Start() {
         SetText(Object.notificationText, "");
+        SetScoreText();
+        SetLivesText();
 
         var fields = new List<(string, string)>();
         foreach (FieldInfo field in typeof(Key).GetFields()) {
@@ -50,6 +51,7 @@ public class GameController : MonoBehaviour {
         foreach (var tuple in fields) {
             keyBindings += tuple.Item1 + ": " + tuple.Item2 + '\n';
         }
+        keyBindings.TrimEnd();
         SetText(Object.keyBindingsText, keyBindings);
     }
 
@@ -67,6 +69,11 @@ public class GameController : MonoBehaviour {
     private void SetScoreText() {
         string text = "Score: " + _score;
         SetText(Object.scoreText, text);
+    }
+
+    private void SetLivesText() {
+        string text = "Lives: " + _lives;
+        SetText(Object.livesText, text);
     }
 
     private void SetText(string key, string text) {
