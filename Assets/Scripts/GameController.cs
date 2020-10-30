@@ -7,13 +7,22 @@ public class GameController : MonoBehaviour {
     private int _lives = 3;
     private int _score = 0;
     private bool _debug = false;
+    private bool _gameOver = false;
 
 
     public bool IsDebug {
         get => _debug;
     }
 
+    public bool GameOver {
+        get => _gameOver;
+    }
+
     public void IncreaseScore() {
+        if (_gameOver) {
+            return;
+        }
+
         ++_score;
 
         SetScoreText();
@@ -30,7 +39,9 @@ public class GameController : MonoBehaviour {
         Debug.Log("Lost life");
 
         if (_lives == 0) {
-            SetText(Object.notificationText, "GAME OVER");
+            string text = "GAME OVER\nScore: " + _score;
+            SetText(Object.notificationText, text);
+            _gameOver = true;
         }
     }
 

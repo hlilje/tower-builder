@@ -63,8 +63,10 @@ public class BlockSpawner : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(Key.blockSpawn)) {
-            bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug;
-            if (debug || (!_paused && _available && _currentCooldown <= 0.0f )) {
+            GameController gameController = GameObject.Find(Object.game).GetComponent<GameController>();
+            bool debug = gameController.IsDebug;
+            bool gameOver = gameController.GameOver;
+            if (debug || (!gameOver && !_paused && _available && _currentCooldown <= 0.0f )) {
                 SpawnBlock();
             }
         }
