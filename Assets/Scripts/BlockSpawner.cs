@@ -57,7 +57,7 @@ public class BlockSpawner : MonoBehaviour {
 
         if (!_paused) {
             _currentCooldown -= Time.deltaTime;
-            Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
+            _currentCooldown = Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
 
             UpdatePosition();
         }

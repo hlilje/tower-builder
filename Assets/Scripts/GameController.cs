@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour {
 
     public void DecreaseLives() {
         --_lives;
+        _lives = Mathf.Clamp(_lives, 0, _lives);
 
         SetLivesText();
 
