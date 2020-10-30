@@ -4,16 +4,12 @@
 public class BlockSpawner : MonoBehaviour {
     public GameObject prefab;
 
-    private GameObject _parent;
+    private GameObject _block;
 
-    private const float _speed = 2.0f;
     private const float _cooldown = 1.0f;
-    private const int _sideLimits = 2;
 
     private float _blockHeight;
     private float _currentCooldown;
-    private int _direction = 1;
-    private bool _available = true;
     private bool _paused = false;
 
 
@@ -22,7 +18,12 @@ public class BlockSpawner : MonoBehaviour {
         position.y += _blockHeight;
         transform.position = position;
 
-        SetAvailable(true);
+        HingeJoint hingeJoint = GetComponent<HingeJoint>();
+        Vector3 anchor = hingeJoint.connectedAnchor;
+        anchor.y += _blockHeight;
+        hingeJoint.connectedAnchor = anchor;
+
+        SpawnBlock();
 
         CameraController camera = GameObject.Find(Object.camera).GetComponent<CameraController>();
         camera.OnBlockSpawned(_blockHeight);
@@ -36,7 +37,9 @@ public class BlockSpawner : MonoBehaviour {
         }
         block.Missed = true;
 
-        SetAvailable(true);
+        if (!_block) {
+            SpawnBlock();
+        }
 
         GameObject.Find(Object.game).GetComponent<GameController>().DecreaseLives();
 
@@ -47,7 +50,7 @@ public class BlockSpawner : MonoBehaviour {
     private void Start() {
         _blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
 
-        SpawnParentBlock();
+        SpawnBlock();
     }
 
     private void Update() {
@@ -59,46 +62,57 @@ public class BlockSpawner : MonoBehaviour {
             _currentCooldown -= Time.deltaTime;
             _currentCooldown = Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
 
-            UpdatePosition();
+            UpdateMovement();
         }
 
         if (Input.GetKeyDown(Key.blockSpawn)) {
             GameController gameController = GameObject.Find(Object.game).GetComponent<GameController>();
             bool debug = gameController.IsDebug;
             bool gameOver = gameController.GameOver;
-            if (debug || (!gameOver && !_paused && _available && _currentCooldown <= 0.0f )) {
-                SpawnBlock();
+            if (debug || (!gameOver && !_paused && _block && _currentCooldown <= 0.0f )) {
+                ReleaseBlock();
             }
         }
     }
 
 
-    private void UpdatePosition() {
-        Vector3 position = transform.position;
-        position.x += _direction * (_speed * Time.deltaTime);
-        if (position.x <= -_sideLimits || position.x >= _sideLimits) {
-            position.x = position.x < 0 ? -_sideLimits : _sideLimits;
-            _direction *= -1;
+    private void UpdateMovement() {
+        HingeJoint hingeJoint = GetComponent<HingeJoint>();
+        JointLimits limits = hingeJoint.limits;
+        if (hingeJoint.angle <= limits.min || hingeJoint.angle >= limits.max) {
+            JointMotor motor = hingeJoint.motor;
+            motor.targetVelocity *= -1;
+            hingeJoint.motor = motor;
         }
-        transform.position = position;
     }
 
-    private void SpawnParentBlock() {
-        _parent = Instantiate(prefab, transform.position, Quaternion.identity);
-        _parent.transform.parent = transform;
-        Rigidbody rigidbody = _parent.GetComponent<Rigidbody>();
+    private void SpawnBlock() {
+        if (_block) {
+            Debug.LogError("Block aleady exists");
+            return;
+        }
+
+        _block = Instantiate(prefab, transform.position, transform.rotation);
+        _block.transform.parent = transform;
+
+        Rigidbody rigidbody = _block.GetComponent<Rigidbody>();
         rigidbody.isKinematic = true;
         rigidbody.detectCollisions = false;
     }
 
-    private void SetAvailable(bool available) {
-        _available = available;
-        _parent.GetComponent<Renderer>().enabled = available;
-    }
+    private void ReleaseBlock() {
+        if (!_block) {
+            Debug.LogError("Block doesn't exist");
+            return;
+        }
 
-    private void SpawnBlock() {
-        Instantiate(prefab, transform.position, Quaternion.identity);
-        SetAvailable(false);
+        _block.transform.parent = null;
+
+        Rigidbody rigidbody = _block.GetComponent<Rigidbody>();
+        rigidbody.isKinematic = false;
+        rigidbody.detectCollisions = true;
+
+        _block = null;
         _currentCooldown = _cooldown;
     }
 }
