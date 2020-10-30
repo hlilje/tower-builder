@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 
@@ -37,12 +38,17 @@ public class GameController : MonoBehaviour {
     private void Start() {
         SetText(Object.notificationText, "");
 
-        string keyBindings = "";
-        foreach(FieldInfo field in typeof(Key).GetFields()) {
+        var fields = new List<(string, string)>();
+        foreach (FieldInfo field in typeof(Key).GetFields()) {
             if (field.FieldType == typeof(KeyCode)) {
-                // TODO: Print value
-                keyBindings += field.Name + '\n';
+                fields.Add((field.Name, field.GetValue(null).ToString()));
             }
+        }
+        fields.Sort();
+
+        string keyBindings = "";
+        foreach (var tuple in fields) {
+            keyBindings += tuple.Item1 + ": " + tuple.Item2 + '\n';
         }
         SetText(Object.keyBindingsText, keyBindings);
     }

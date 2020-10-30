@@ -19,7 +19,7 @@ public class Block : MonoBehaviour {
     public void SetCollisionTarget(bool target) {
         _collisionTarget = target;
 
-        Debug.Log("New collision target: " + GetInstanceID() );
+        Debug.Log("New collision target: " + GetInstanceID());
     }
 
     public void SetAbortCollision(bool abort) {
