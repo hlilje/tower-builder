@@ -9,8 +9,8 @@ public class GameController : MonoBehaviour {
     private bool _debug = false;
 
 
-    public bool IsDebug() {
-        return _debug;
+    public bool IsDebug {
+        get => _debug;
     }
 
     public void IncreaseScore() {

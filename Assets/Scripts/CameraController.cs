@@ -50,7 +50,7 @@ public class CameraController : MonoBehaviour {
 
 
     private void UpdatePosition() {
-        bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
+        bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug;
         if (!debug) {
             return;
         }

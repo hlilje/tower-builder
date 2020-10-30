@@ -10,6 +10,7 @@ public class Block : MonoBehaviour {
     private float _halfWidth;
     private bool _collisionTarget = false;
     private bool _abortCollision = false;
+    private bool _missed = false;
 
 
     public bool IsCollisionTarget() {
@@ -22,8 +23,13 @@ public class Block : MonoBehaviour {
         Debug.Log("New collision target: " + GetInstanceID());
     }
 
-    public void SetAbortCollision(bool abort) {
-        _abortCollision = abort;
+    public bool AbortCollision {
+        set => _abortCollision = value;
+    }
+
+    public bool Missed {
+        get => _missed;
+        set => _missed = value;
     }
 
 
@@ -59,7 +65,7 @@ public class Block : MonoBehaviour {
 
                 Debug.Log("Attached to ground");
             } else {
-                blockSpawner.OnBlockMissed();
+                blockSpawner.OnBlockMissed(this);
             }
         } else {
             Debug.LogError("Collision with unknown object");
@@ -120,7 +126,7 @@ public class Block : MonoBehaviour {
 
         if (!block.IsCollisionTarget()) {
             if (!_collisionTarget) {
-                blockSpawner.OnBlockMissed();
+                blockSpawner.OnBlockMissed(this);
             }
             return;
         }
@@ -129,7 +135,7 @@ public class Block : MonoBehaviour {
         Vector3 collisionPosition = collision.transform.position;
         float distance = Mathf.Abs(transform.position.x - collisionPosition.x);
         if (distance > _halfWidth) {
-            blockSpawner.OnBlockMissed();
+            blockSpawner.OnBlockMissed(this);
             return;
         }
 
@@ -137,7 +143,7 @@ public class Block : MonoBehaviour {
         AddJoint<SpringJoint>(gameObject, contactPoint, true, true);
 
         // Avoid flip-flopping during the collison update
-        block.SetAbortCollision(true);
+        block.AbortCollision = true;
 
         block.SetCollisionTarget(false);
         SetCollisionTarget(true);

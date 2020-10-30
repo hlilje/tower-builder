@@ -30,7 +30,12 @@ public class BlockSpawner : MonoBehaviour {
         GameObject.Find(Object.game).GetComponent<GameController>().IncreaseScore();
     }
 
-    public void OnBlockMissed() {
+    public void OnBlockMissed(Block block) {
+        if (block.Missed) {
+            return;
+        }
+        block.Missed = true;
+
         SetAvailable(true);
 
         GameObject.Find(Object.game).GetComponent<GameController>().DecreaseLives();
@@ -58,7 +63,7 @@ public class BlockSpawner : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(Key.blockSpawn)) {
-            bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug();
+            bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug;
             if (debug || (!_paused && _available && _currentCooldown <= 0.0f )) {
                 SpawnBlock();
             }
