@@ -6,6 +6,7 @@ public class BlockSpawner : MonoBehaviour {
 
     private GameObject _block;
 
+    private const float _velocityIncrement = 0.5f;
     private const float _cooldown = 1.0f;
 
     private float _blockHeight;
@@ -23,7 +24,7 @@ public class BlockSpawner : MonoBehaviour {
         anchor.y += _blockHeight;
         hingeJoint.connectedAnchor = anchor;
 
-        SpawnBlock();
+        SpawnBlock(_velocityIncrement);
 
         CameraController camera = GameObject.Find(Object.camera).GetComponent<CameraController>();
         camera.OnBlockSpawned(_blockHeight);
@@ -42,7 +43,7 @@ public class BlockSpawner : MonoBehaviour {
             block.State = BlockState.Missed;
 
             if (!_block) {
-                SpawnBlock();
+                SpawnBlock(_velocityIncrement);
             }
         }
 
@@ -55,7 +56,7 @@ public class BlockSpawner : MonoBehaviour {
     private void Start() {
         _blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
 
-        SpawnBlock();
+        SpawnBlock(0.0f);
     }
 
     private void Update() {
@@ -91,7 +92,7 @@ public class BlockSpawner : MonoBehaviour {
         }
     }
 
-    private void SpawnBlock() {
+    private void SpawnBlock(float velocityIncrement) {
         if (_block) {
             Debug.LogError("Block aleady exists");
             return;
@@ -103,6 +104,11 @@ public class BlockSpawner : MonoBehaviour {
         Rigidbody rigidbody = _block.GetComponent<Rigidbody>();
         rigidbody.isKinematic = true;
         rigidbody.detectCollisions = false;
+
+        HingeJoint hingeJoint = GetComponent<HingeJoint>();
+        JointMotor motor = hingeJoint.motor;
+        motor.targetVelocity += velocityIncrement * Mathf.Sign(motor.targetVelocity);
+        hingeJoint.motor = motor;
     }
 
     private void ReleaseBlock() {
