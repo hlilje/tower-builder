@@ -5,7 +5,7 @@ public enum BlockState {
     InFlight,
     CollisionTarget,
     Missed,
-    Settled
+    Attached
 }
 
 public class Block : MonoBehaviour {
@@ -137,7 +137,7 @@ public class Block : MonoBehaviour {
         Vector3 contactPoint = FindClosestContactPoint(collision);
         AddJoint<FixedJoint>(gameObject, contactPoint, true, true);
 
-        block.State = BlockState.Settled;
+        block.State = BlockState.Attached;
         SetCollisionTarget();
 
         blockSpawner.OnBlockAttached();

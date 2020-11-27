@@ -34,7 +34,7 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     public void OnBlockMissed(Block block) {
-        if (block.State != BlockState.InFlight && block.State != BlockState.Settled) {
+        if (block.State != BlockState.InFlight && block.State != BlockState.Attached) {
             return;
         }
 
