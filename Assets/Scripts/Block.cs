@@ -49,7 +49,7 @@ public class Block : MonoBehaviour {
 
             // Only the first block is attached to the ground
             if (!gameObject.GetComponent<Joint>()) {
-                AddJoint<FixedJoint>(gameObject, Vector3.zero, true, false);
+                AddJoint(gameObject);
 
                 blockSpawner.OnBlockAttached();
 
@@ -70,42 +70,18 @@ public class Block : MonoBehaviour {
         Debug.Log("New collision target: " + GetInstanceID());
     }
 
-    private Vector3 FindClosestContactPoint(Collision collision) {
-        int contacts = collision.GetContacts(_contactPoints);
-
-        float closestContactDistance = float.MaxValue;
-        Vector3 closestContactPoint = Vector3.zero;
-
-        for (int i = 0; i < contacts; ++i) {
-            Vector3 contactPoint = _contactPoints[i].point;
-            float contactDistance = (contactPoint - transform.position).magnitude;
-            if (contactDistance < closestContactDistance) {
-                closestContactDistance = contactDistance;
-                closestContactPoint = contactPoint;
-            }
-        }
-
-        return closestContactPoint;
-    }
-
-    private void AddJoint<T>(GameObject gameObject, Vector3 contactPoint, bool autoAnchor, bool breakable) where T : Joint {
+    private void AddJoint(GameObject gameObject) {
         if (GetComponents<Joint>().Length > 0 || gameObject.GetComponents<Joint>().Length > 0) {
             return;
         }
 
-        gameObject.AddComponent<T>();
+        gameObject.AddComponent<FixedJoint>();
 
-        T joint = gameObject.GetComponent<T>();
+        FixedJoint joint = gameObject.GetComponent<FixedJoint>();
         joint.connectedBody = GetComponent<Rigidbody>();
-        joint.autoConfigureConnectedAnchor = autoAnchor;
-        if (!autoAnchor) {
-            joint.connectedAnchor = contactPoint;
-        }
-        if (breakable) {
-            joint.breakForce = _jointBreakForce;
-        }
+        joint.breakForce = _jointBreakForce;
 
-        Debug.Log("Added " + typeof(T).Name + " at anchor " + joint.connectedAnchor);
+        Debug.Log("Added joint with break force: " + _jointBreakForce);
     }
 
     private void BlockHit(Collision collision, GameObject gameObject) {
@@ -134,8 +110,7 @@ public class Block : MonoBehaviour {
             return;
         }
 
-        Vector3 contactPoint = FindClosestContactPoint(collision);
-        AddJoint<FixedJoint>(gameObject, contactPoint, true, true);
+        AddJoint(gameObject);
 
         block.State = BlockState.Attached;
         SetCollisionTarget();
