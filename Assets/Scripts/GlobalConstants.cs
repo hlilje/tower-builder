@@ -28,5 +28,5 @@ public static class Key {
 
     public static readonly KeyCode debug = KeyCode.D;
     public static readonly KeyCode pause = KeyCode.P;
-    public static readonly KeyCode blockSpawn = KeyCode.Q;
+    public static readonly KeyCode blockSpawn = KeyCode.Space;
 }
