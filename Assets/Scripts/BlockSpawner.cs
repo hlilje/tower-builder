@@ -29,16 +29,21 @@ public class BlockSpawner : MonoBehaviour {
         camera.OnBlockSpawned(_blockHeight);
 
         GameObject.Find(Object.game).GetComponent<GameController>().IncreaseScore();
+
+        Debug.Log("Block attached");
     }
 
     public void OnBlockMissed(Block block) {
-        if (block.Missed) {
+        if (block.State != BlockState.InFlight && block.State != BlockState.Settled) {
             return;
         }
-        block.Missed = true;
 
-        if (!_block) {
-            SpawnBlock();
+        if (block.State == BlockState.InFlight) {
+            block.State = BlockState.Missed;
+
+            if (!_block) {
+                SpawnBlock();
+            }
         }
 
         GameObject.Find(Object.game).GetComponent<GameController>().DecreaseLives();

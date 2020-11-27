@@ -1,35 +1,27 @@
 ﻿using UnityEngine;
 
 
+public enum BlockState {
+    InFlight,
+    CollisionTarget,
+    Missed,
+    Settled
+}
+
 public class Block : MonoBehaviour {
+    private const float _jointBreakForce = Mathf.Infinity;
+
     private const int _maxContactCount = 6;
     private ContactPoint[] _contactPoints = new ContactPoint[_maxContactCount];
 
-    private const float _jointBreakForce = 20.0f;
-
     private float _halfWidth;
-    private bool _collisionTarget = false;
-    private bool _abortCollision = false;
-    private bool _missed = false;
+
+    private BlockState _state = BlockState.InFlight;
 
 
-    public bool IsCollisionTarget() {
-        return _collisionTarget;
-    }
-
-    public void SetCollisionTarget(bool target) {
-        _collisionTarget = target;
-
-        Debug.Log("New collision target: " + GetInstanceID());
-    }
-
-    public bool AbortCollision {
-        set => _abortCollision = value;
-    }
-
-    public bool Missed {
-        get => _missed;
-        set => _missed = value;
+    public BlockState State {
+        get => _state;
+        set => _state = value;
     }
 
 
@@ -61,7 +53,7 @@ public class Block : MonoBehaviour {
 
                 blockSpawner.OnBlockAttached();
 
-                SetCollisionTarget(true);
+                SetCollisionTarget();
 
                 Debug.Log("Attached to ground");
             } else {
@@ -72,6 +64,11 @@ public class Block : MonoBehaviour {
         }
     }
 
+
+    private void SetCollisionTarget() {
+        _state = BlockState.CollisionTarget;
+        Debug.Log("New collision target: " + GetInstanceID());
+    }
 
     private Vector3 FindClosestContactPoint(Collision collision) {
         int contacts = collision.GetContacts(_contactPoints);
@@ -116,18 +113,16 @@ public class Block : MonoBehaviour {
             return;
         }
 
-        if (_abortCollision) {
-            _abortCollision = false;
+        // Always handle the collision from the dropped blocks perspective
+        if (_state != BlockState.InFlight) {
             return;
         }
 
         BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
         Block block = gameObject.GetComponent<Block>();
 
-        if (!block.IsCollisionTarget()) {
-            if (!_collisionTarget) {
-                blockSpawner.OnBlockMissed(this);
-            }
+        if (block.State != BlockState.CollisionTarget) {
+            blockSpawner.OnBlockMissed(this);
             return;
         }
 
@@ -140,17 +135,12 @@ public class Block : MonoBehaviour {
         }
 
         Vector3 contactPoint = FindClosestContactPoint(collision);
-        AddJoint<SpringJoint>(gameObject, contactPoint, true, true);
+        AddJoint<FixedJoint>(gameObject, contactPoint, true, true);
 
-        // Avoid flip-flopping during the collison update
-        block.AbortCollision = true;
-
-        block.SetCollisionTarget(false);
-        SetCollisionTarget(true);
+        block.State = BlockState.Settled;
+        SetCollisionTarget();
 
         blockSpawner.OnBlockAttached();
-
-        Debug.Log("Attached to block");
     }
 
     private void OnJointBreak(float breakForce) {
