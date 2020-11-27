@@ -20,12 +20,12 @@ public class CameraController : MonoBehaviour {
         _free = false;
     }
 
-    public void OnBlockSpawned(float blockHeight) {
-        _position.y += blockHeight;
+    public void IncreaseHeight(float height) {
+        _position.y += height;
 
         if (!_free) {
             Vector3 position = transform.position;
-            position.y += blockHeight;
+            position.y += height;
             transform.position = position;
         }
     }

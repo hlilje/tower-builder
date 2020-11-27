@@ -8,26 +8,18 @@ public class BlockSpawner : MonoBehaviour {
 
     private const float _velocityIncrement = 0.5f;
     private const float _cooldown = 1.0f;
+    private const float _heightSpeed = 1.0f;
 
     private float _blockHeight;
-    private float _currentCooldown;
+    private float _targetHeight = 0.0f;
+    private float _currentCooldown = 0.0f;
     private bool _paused = false;
 
 
     public void OnBlockAttached() {
-        Vector3 position = transform.position;
-        position.y += _blockHeight;
-        transform.position = position;
-
-        HingeJoint hingeJoint = GetComponent<HingeJoint>();
-        Vector3 anchor = hingeJoint.connectedAnchor;
-        anchor.y += _blockHeight;
-        hingeJoint.connectedAnchor = anchor;
+        _targetHeight += _blockHeight;
 
         SpawnBlock(_velocityIncrement);
-
-        CameraController camera = GameObject.Find(Object.camera).GetComponent<CameraController>();
-        camera.OnBlockSpawned(_blockHeight);
 
         GameObject.Find(Object.game).GetComponent<GameController>().IncreaseScore();
 
@@ -75,7 +67,7 @@ public class BlockSpawner : MonoBehaviour {
             GameController gameController = GameObject.Find(Object.game).GetComponent<GameController>();
             bool debug = gameController.IsDebug;
             bool gameOver = gameController.GameOver;
-            if (debug || (!gameOver && !_paused && _block && _currentCooldown <= 0.0f )) {
+            if (debug || (!gameOver && !_paused && _block && _currentCooldown <= 0.0f && _targetHeight <= 0.0f )) {
                 ReleaseBlock();
             }
         }
@@ -89,6 +81,25 @@ public class BlockSpawner : MonoBehaviour {
             JointMotor motor = hingeJoint.motor;
             motor.targetVelocity *= -1;
             hingeJoint.motor = motor;
+        }
+
+        if (_targetHeight > 0.0f) {
+            float heightDelta = _heightSpeed * Time.deltaTime;
+            float newHeight = Mathf.Clamp(_targetHeight - heightDelta, 0.0f, _targetHeight);
+            float heightDiff = _targetHeight - newHeight;
+
+            Vector3 position = transform.position;
+            position.y += heightDiff;
+            transform.position = position;
+
+            Vector3 anchor = hingeJoint.connectedAnchor;
+            anchor.y += heightDiff;
+            hingeJoint.connectedAnchor = anchor;
+
+            CameraController camera = GameObject.Find(Object.camera).GetComponent<CameraController>();
+            camera.IncreaseHeight(heightDiff);
+
+            _targetHeight = newHeight;
         }
     }
 
