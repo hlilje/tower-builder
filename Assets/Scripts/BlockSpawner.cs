@@ -67,7 +67,8 @@ public class BlockSpawner : MonoBehaviour {
             GameController gameController = GameObject.Find(Object.game).GetComponent<GameController>();
             bool debug = gameController.IsDebug;
             bool gameOver = gameController.GameOver;
-            if (debug || (!gameOver && !_paused && _block && _currentCooldown <= 0.0f && _targetHeight <= 0.0f )) {
+            bool waiting = _currentCooldown > 0.0f || _targetHeight > 0.0f;
+            if (_block && (debug || (!gameOver && !_paused && !waiting) ) ) {
                 ReleaseBlock();
             }
         }
