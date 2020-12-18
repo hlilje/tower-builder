@@ -33,24 +33,24 @@ public class CameraController : MonoBehaviour {
 
     private void Start() {
         _position = transform.position;
-        _blockSpawnerPosition = GameObject.Find(Object.blockSpawner).transform.position;
+        _blockSpawnerPosition = GameObject.Find(GameUObject.blockSpawner).transform.position;
     }
 
     private void Update() {
         UpdatePosition();
 
-        if (Input.GetKeyDown(Key.cameraReset)) {
+        if (Input.GetKeyDown(GameKey.cameraReset)) {
             Reset();
         }
 
-        if (Input.GetKeyDown(Key.cameraFree)) {
+        if (Input.GetKeyDown(GameKey.cameraFree)) {
             _free = !_free;
         }
     }
 
 
     private void UpdatePosition() {
-        bool debug = GameObject.Find(Object.game).GetComponent<GameController>().IsDebug;
+        bool debug = GameObject.Find(GameUObject.game).GetComponent<GameController>().IsDebug;
         if (!debug) {
             return;
         }
@@ -59,27 +59,27 @@ public class CameraController : MonoBehaviour {
         float moveDelta = Time.deltaTime * moveSpeed;
         float rotationDelta = Time.deltaTime * _rotationSpeed;
 
-        if (Input.GetKey(Key.cameraRotateLeft)) {
+        if (Input.GetKey(GameKey.cameraRotateLeft)) {
             transform.RotateAround(_blockSpawnerPosition, Vector3.up, rotationDelta);
-        } else if (Input.GetKey(Key.cameraRotateRight)) {
+        } else if (Input.GetKey(GameKey.cameraRotateRight)) {
             transform.RotateAround(_blockSpawnerPosition, Vector3.up, -rotationDelta);
         } else {
             Vector3 position = transform.position;
 
-            if (Input.GetKey(Key.cameraModifier)) {
-                if (Input.GetKey(Key.cameraUp)) {
+            if (Input.GetKey(GameKey.cameraModifier)) {
+                if (Input.GetKey(GameKey.cameraUp)) {
                     position.y += moveDelta;
-                } else if (Input.GetKey(Key.cameraDown)) {
-                    GameObject ground = GameObject.Find(Object.ground);
+                } else if (Input.GetKey(GameKey.cameraDown)) {
+                    GameObject ground = GameObject.Find(GameUObject.ground);
                     position.y -= moveDelta;
                     float limit = ground.transform.position.y + _groundOffset;
                     position.y = Mathf.Max(position.y, _groundOffset);
                 }
             } else {
                 Vector3 moveDeltaVec = CalcDirectionVector(position, true) * moveDelta;
-                if (Input.GetKey(Key.cameraForward)) {
+                if (Input.GetKey(GameKey.cameraForward)) {
                     position -= moveDeltaVec;
-                } else if (Input.GetKey(Key.cameraBack)) {
+                } else if (Input.GetKey(GameKey.cameraBack)) {
                     position += moveDeltaVec;
                 }
             }

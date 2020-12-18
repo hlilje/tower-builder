@@ -2,11 +2,10 @@
 
 
 public static class GameScene {
-    public static readonly string menu = "Menu";
     public static readonly string play = "Play";
 }
 
-public static class Object {
+public static class GameUObject {
     public static readonly string game = "Game Controller";
     public static readonly string camera = "Main Camera";
 
@@ -20,11 +19,9 @@ public static class Object {
     public static readonly string notificationText = "Notification Text";
 }
 
-public static class Key {
-    public static readonly KeyCode gameStart = KeyCode.Return;
+public static class GameKey {
     public static readonly KeyCode gameReset = KeyCode.F5;
     public static readonly KeyCode gameMenu = KeyCode.Escape;
-    public static readonly KeyCode gameQuit = KeyCode.Escape;
 
     public static readonly string cameraUp = "up";
     public static readonly string cameraDown = "down";

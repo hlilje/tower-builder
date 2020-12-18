@@ -38,14 +38,14 @@ public class Block : MonoBehaviour {
 
         GameObject gameObject = collision.gameObject;
 
-        if (gameObject.tag == Object.block) {
+        if (gameObject.tag == GameUObject.block) {
             Debug.Log("Block hit");
 
             BlockHit(collision, gameObject);
-        } else if (gameObject.tag == Object.ground) {
+        } else if (gameObject.tag == GameUObject.ground) {
             Debug.Log("Ground hit");
 
-            BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
+            BlockSpawner blockSpawner = GameObject.Find(GameUObject.blockSpawner).GetComponent<BlockSpawner>();
 
             // Only the first block is attached to the ground
             if (!gameObject.GetComponent<Joint>()) {
@@ -94,7 +94,7 @@ public class Block : MonoBehaviour {
             return;
         }
 
-        BlockSpawner blockSpawner = GameObject.Find(Object.blockSpawner).GetComponent<BlockSpawner>();
+        BlockSpawner blockSpawner = GameObject.Find(GameUObject.blockSpawner).GetComponent<BlockSpawner>();
         Block block = gameObject.GetComponent<Block>();
 
         if (block.State != BlockState.CollisionTarget) {

@@ -6,19 +6,18 @@ public class SceneController : MonoBehaviour {
     private void Update() {
         Scene scene = SceneManager.GetActiveScene();
 
-        if (scene.name == GameScene.menu) {
-            if (Input.GetKeyDown(Key.gameStart)) {
+        if (scene.name == MenuScene.menu) {
+            if (Input.GetKeyDown(MenuKey.gameStart)) {
                 LoadScene(GameScene.play);
-            } else if (Input.GetKeyDown(Key.gameQuit)) {
+            } else if (Input.GetKeyDown(MenuKey.gameQuit)) {
                 Debug.Log("Quitting");
                 Application.Quit();
             }
-        }
-        else if (scene.name == GameScene.play) {
-            if (Input.GetKeyDown(Key.gameReset)) {
+        } else if (scene.name == GameScene.play) {
+            if (Input.GetKeyDown(GameKey.gameReset)) {
                 LoadScene(GameScene.play);
-            } else if (Input.GetKeyDown(Key.gameQuit)) {
-                LoadScene(GameScene.menu);
+            } else if (Input.GetKeyDown(GameKey.gameMenu)) {
+                LoadScene(MenuScene.menu);
             }
         } else {
             Debug.LogError("Unhandled scene: " + scene.name);

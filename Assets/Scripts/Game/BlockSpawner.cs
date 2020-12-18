@@ -21,7 +21,7 @@ public class BlockSpawner : MonoBehaviour {
 
         SpawnBlock(_velocityIncrement);
 
-        GameObject.Find(Object.game).GetComponent<GameController>().IncreaseScore();
+        GameObject.Find(GameUObject.game).GetComponent<GameController>().IncreaseScore();
 
         Debug.Log("Block attached");
     }
@@ -39,7 +39,7 @@ public class BlockSpawner : MonoBehaviour {
             }
         }
 
-        GameObject.Find(Object.game).GetComponent<GameController>().DecreaseLives();
+        GameObject.Find(GameUObject.game).GetComponent<GameController>().DecreaseLives();
 
         Debug.Log("Block missed");
     }
@@ -52,7 +52,7 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetKeyDown(Key.pause)) {
+        if (Input.GetKeyDown(GameKey.pause)) {
             _paused = !_paused;
         }
 
@@ -63,8 +63,8 @@ public class BlockSpawner : MonoBehaviour {
             UpdateMovement();
         }
 
-        if (Input.GetKeyDown(Key.blockSpawn)) {
-            GameController gameController = GameObject.Find(Object.game).GetComponent<GameController>();
+        if (Input.GetKeyDown(GameKey.blockSpawn)) {
+            GameController gameController = GameObject.Find(GameUObject.game).GetComponent<GameController>();
             bool debug = gameController.IsDebug;
             bool gameOver = gameController.GameOver;
             bool waiting = _currentCooldown > 0.0f || _targetHeight > 0.0f;
@@ -97,7 +97,7 @@ public class BlockSpawner : MonoBehaviour {
             anchor.y += heightDiff;
             hingeJoint.connectedAnchor = anchor;
 
-            CameraController camera = GameObject.Find(Object.camera).GetComponent<CameraController>();
+            CameraController camera = GameObject.Find(GameUObject.camera).GetComponent<CameraController>();
             camera.IncreaseHeight(heightDiff);
 
             _targetHeight = newHeight;

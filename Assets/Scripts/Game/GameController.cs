@@ -40,19 +40,19 @@ public class GameController : MonoBehaviour {
 
         if (_lives == 0) {
             string text = "GAME OVER\nScore: " + _score;
-            SetText(Object.notificationText, text);
+            SetText(GameUObject.notificationText, text);
             _gameOver = true;
         }
     }
 
 
     private void Start() {
-        SetText(Object.notificationText, "");
+        SetText(GameUObject.notificationText, "");
         SetScoreText();
         SetLivesText();
 
         var fields = new List<(string, string)>();
-        foreach (FieldInfo field in typeof(Key).GetFields()) {
+        foreach (FieldInfo field in typeof(GameKey).GetFields()) {
             if (field.FieldType == typeof(KeyCode)) {
                 fields.Add((field.Name, field.GetValue(null).ToString()));
             }
@@ -64,14 +64,14 @@ public class GameController : MonoBehaviour {
             keyBindings += tuple.Item1 + ": " + tuple.Item2 + '\n';
         }
         keyBindings.TrimEnd();
-        SetText(Object.keyBindingsText, keyBindings);
+        SetText(GameUObject.keyBindingsText, keyBindings);
     }
 
     private void Update() {
-        if (Input.GetKeyDown(Key.debug)) {
+        if (Input.GetKeyDown(GameKey.debug)) {
             _debug = !_debug;
             if (!_debug) {
-                GameObject.Find(Object.camera).GetComponent<CameraController>().Reset();
+                GameObject.Find(GameUObject.camera).GetComponent<CameraController>().Reset();
             }
             Debug.Log("Debug: " + _debug);
         }
@@ -80,12 +80,12 @@ public class GameController : MonoBehaviour {
 
     private void SetScoreText() {
         string text = "Score: " + _score;
-        SetText(Object.scoreText, text);
+        SetText(GameUObject.scoreText, text);
     }
 
     private void SetLivesText() {
         string text = "Lives: " + _lives;
-        SetText(Object.livesText, text);
+        SetText(GameUObject.livesText, text);
     }
 
     private void SetText(string key, string text) {
