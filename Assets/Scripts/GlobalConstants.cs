@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
 
-public static class Scene {
+public static class GameScene {
+    public static readonly string menu = "Menu";
     public static readonly string play = "Play";
 }
 
@@ -20,6 +21,11 @@ public static class Object {
 }
 
 public static class Key {
+    public static readonly KeyCode gameStart = KeyCode.Return;
+    public static readonly KeyCode gameReset = KeyCode.F5;
+    public static readonly KeyCode gameMenu = KeyCode.Escape;
+    public static readonly KeyCode gameQuit = KeyCode.Escape;
+
     public static readonly string cameraUp = "up";
     public static readonly string cameraDown = "down";
     public static readonly string cameraForward = "up";
@@ -33,5 +39,4 @@ public static class Key {
     public static readonly KeyCode debug = KeyCode.D;
     public static readonly KeyCode pause = KeyCode.P;
     public static readonly KeyCode blockSpawn = KeyCode.Space;
-    public static readonly KeyCode gameReset = KeyCode.Escape;
 }
