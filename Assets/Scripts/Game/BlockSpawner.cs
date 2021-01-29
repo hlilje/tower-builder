@@ -2,7 +2,8 @@
 
 
 public class BlockSpawner : MonoBehaviour {
-    public GameObject prefab;
+    public GameObject _floorPrefab;
+    public GameObject _roofPrefab;
 
     private GameObject _block;
 
@@ -13,15 +14,30 @@ public class BlockSpawner : MonoBehaviour {
     private float _blockHeight;
     private float _targetHeight = 0.0f;
     private float _currentCooldown = 0.0f;
+    private int _floor = 0;
     private bool _paused = false;
+    private bool _useRoofBlock = false;
 
 
     public void OnBlockAttached() {
+        GameController gameController = GameObject.Find(GameUObject.game).GetComponent<GameController>();
+
+        if (_useRoofBlock) {
+            gameController.WinGame();
+            return;
+        }
+
         _targetHeight += _blockHeight;
+        ++_floor;
+
+        if (GameInfo.ShouldSpawnRoof(_floor)) {
+            _useRoofBlock = true;
+            Debug.Log("Spawning roof");
+        }
 
         SpawnBlock(_velocityIncrement);
 
-        GameObject.Find(GameUObject.game).GetComponent<GameController>().IncreaseScore();
+        gameController.IncreaseScore();
 
         Debug.Log("Block attached");
     }
@@ -46,7 +62,7 @@ public class BlockSpawner : MonoBehaviour {
 
 
     private void Start() {
-        _blockHeight = prefab.GetComponent<Renderer>().bounds.size.x;
+        _blockHeight = _floorPrefab.GetComponent<Renderer>().bounds.size.x;
 
         SpawnBlock(0.0f);
     }
@@ -109,6 +125,8 @@ public class BlockSpawner : MonoBehaviour {
             Debug.LogError("Block aleady exists");
             return;
         }
+
+        GameObject prefab = _useRoofBlock ? _roofPrefab : _floorPrefab;
 
         _block = Instantiate(prefab, transform.position, transform.rotation);
         _block.transform.parent = transform;

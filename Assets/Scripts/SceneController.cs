@@ -1,8 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 
 public class SceneController : MonoBehaviour {
+    const float _transitionCooldown = 3.0f;
+
+
+    public void OnGameWon() {
+        IEnumerator WaitAndRestart() {
+            yield return new WaitForSecondsRealtime(_transitionCooldown);
+            LoadScene(GameScene.play);
+        }
+
+        StartCoroutine(WaitAndRestart());
+    }
+
+
     private void Update() {
         Scene scene = SceneManager.GetActiveScene();
 
@@ -15,6 +29,8 @@ public class SceneController : MonoBehaviour {
             }
         } else if (scene.name == GameScene.play) {
             if (Input.GetKeyDown(GameKey.gameReset)) {
+                GameInfo.Reset();
+
                 LoadScene(GameScene.play);
             } else if (Input.GetKeyDown(GameKey.gameMenu)) {
                 LoadScene(MenuScene.menu);

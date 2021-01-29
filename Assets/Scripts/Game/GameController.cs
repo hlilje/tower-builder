@@ -4,8 +4,9 @@ using UnityEngine;
 
 
 public class GameController : MonoBehaviour {
+    private const int _winScore = 10;
+
     private int _lives = 3;
-    private int _score = 0;
     private bool _debug = false;
     private bool _gameOver = false;
 
@@ -23,7 +24,7 @@ public class GameController : MonoBehaviour {
             return;
         }
 
-        ++_score;
+        ++GameInfo.Score;
 
         SetScoreText();
 
@@ -43,11 +44,27 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    public void WinGame() {
+        GameInfo.Score += _winScore;
+        SetScoreText();
+
+        ++GameInfo.Level;
+
+        UpdateHighScore();
+
+        SetText(GameUObject.notificationText, "LEVEL COMPLETE");
+
+        GameObject.Find(GlobalObject.sceneController).GetComponent<SceneController>().OnGameWon();
+
+        Debug.Log("Game won");
+    }
+
 
     private void Start() {
         SetText(GameUObject.notificationText, "");
         SetHighScoreText();
         SetScoreText();
+        SetTargetText();
         SetLivesText();
 
         var fields = new List<(string, string)>();
@@ -78,13 +95,21 @@ public class GameController : MonoBehaviour {
 
 
     private void EndGame() {
-        string text = "GAME OVER\nScore: " + _score;
+        string text = "GAME OVER\nScore: " + GameInfo.Score;
         SetText(GameUObject.notificationText, text);
 
-        GameInfo.HighScore = Mathf.Max(GameInfo.HighScore, _score);
-        SetHighScoreText();
+        UpdateHighScore();
+
+        GameInfo.Reset();
 
         _gameOver = true;
+
+        Debug.Log("Game over");
+    }
+
+    private void UpdateHighScore() {
+        GameInfo.HighScore = Mathf.Max(GameInfo.HighScore, GameInfo.Score);
+        SetHighScoreText();
     }
 
     private void SetHighScoreText() {
@@ -93,8 +118,13 @@ public class GameController : MonoBehaviour {
     }
 
     private void SetScoreText() {
-        string text = "Score: " + _score;
+        string text = "Score: " + GameInfo.Score;
         SetText(GameUObject.scoreText, text);
+    }
+
+    private void SetTargetText() {
+        string text = "Target: " + GameInfo.GetTarget();
+        SetText(GameUObject.targetText, text);
     }
 
     private void SetLivesText() {
