@@ -16,11 +16,11 @@
 
     public static string GetLevelText() {
         int numLevels = _FloorsPerLevel.Length;
-        return Level < numLevels ? (Level + 1).ToString() + '/' + numLevels : "Infinite";
+        return Level < numLevels ? (Level + 1).ToString() + '/' + numLevels : "∞";
     }
 
     public static string GetFloorsText() {
-        return Level < _FloorsPerLevel.Length ? _FloorsPerLevel[Level].ToString() : "Infinite";
+        return Level < _FloorsPerLevel.Length ? _FloorsPerLevel[Level].ToString() : "infinite";
     }
 
     public static bool ShouldSpawnRoof(int floors) {
