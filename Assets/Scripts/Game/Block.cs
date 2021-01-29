@@ -11,7 +11,7 @@ public enum BlockState {
 public class Block : MonoBehaviour {
     private const float _jointBreakForce = Mathf.Infinity;
 
-    private const int _maxContactCount = 6;
+    private const int _maxContactCount = 16;
     private ContactPoint[] _contactPoints = new ContactPoint[_maxContactCount];
 
     private float _halfWidth;
