@@ -15,8 +15,9 @@ public static class GameUObject {
 
     public static readonly string highScoreText = "High Score Text";
     public static readonly string scoreText = "Score Text";
-    public static readonly string targetText = "Target Text";
     public static readonly string livesText = "Lives Text";
+    public static readonly string floorsText = "Floors Text";
+    public static readonly string levelText = "Level Text";
     public static readonly string keyBindingsText = "Key Bindings Text";
     public static readonly string notificationText = "Notification Text";
 }

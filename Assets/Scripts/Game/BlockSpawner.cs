@@ -14,7 +14,7 @@ public class BlockSpawner : MonoBehaviour {
     private float _blockHeight;
     private float _targetHeight = 0.0f;
     private float _currentCooldown = 0.0f;
-    private int _floor = 0;
+    private int _floors = 0;
     private bool _paused = false;
     private bool _useRoofBlock = false;
 
@@ -28,16 +28,16 @@ public class BlockSpawner : MonoBehaviour {
         }
 
         _targetHeight += _blockHeight;
-        ++_floor;
+        ++_floors;
 
-        if (GameInfo.ShouldSpawnRoof(_floor)) {
+        if (GameInfo.ShouldSpawnRoof(_floors)) {
             _useRoofBlock = true;
             Debug.Log("Spawning roof");
         }
 
         SpawnBlock(_velocityIncrement);
 
-        gameController.IncreaseScore();
+        gameController.IncreaseFloors(_floors);
 
         Debug.Log("Block attached");
     }

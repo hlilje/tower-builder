@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 public class GameController : MonoBehaviour {
+    private const int _floorScore = 1;
     private const int _winScore = 10;
 
     private int _lives = 3;
@@ -19,13 +20,14 @@ public class GameController : MonoBehaviour {
         get => _gameOver;
     }
 
-    public void IncreaseScore() {
+    public void IncreaseFloors(int newFloors) {
         if (_gameOver) {
             return;
         }
 
-        ++GameInfo.Score;
+        GameInfo.Score += _floorScore;
 
+        SetFloorsText(newFloors);
         SetScoreText();
 
         Debug.Log("Gained score");
@@ -64,8 +66,9 @@ public class GameController : MonoBehaviour {
         SetText(GameUObject.notificationText, "");
         SetHighScoreText();
         SetScoreText();
-        SetTargetText();
         SetLivesText();
+        SetFloorsText(0);
+        SetLevelText();
 
         var fields = new List<(string, string)>();
         foreach (FieldInfo field in typeof(GameKey).GetFields()) {
@@ -77,7 +80,7 @@ public class GameController : MonoBehaviour {
 
         string keyBindings = "";
         foreach (var tuple in fields) {
-            keyBindings += tuple.Item1 + ": " + tuple.Item2 + '\n';
+            keyBindings += tuple.Item1 + ":\t" + tuple.Item2 + '\n';
         }
         keyBindings.TrimEnd();
         SetText(GameUObject.keyBindingsText, keyBindings);
@@ -113,23 +116,28 @@ public class GameController : MonoBehaviour {
     }
 
     private void SetHighScoreText() {
-        string text = "High Score: " + GameInfo.HighScore;
+        string text = "High Score:\t" + GameInfo.HighScore;
         SetText(GameUObject.highScoreText, text);
     }
 
     private void SetScoreText() {
-        string text = "Score: " + GameInfo.Score;
+        string text = "Score:\t" + GameInfo.Score;
         SetText(GameUObject.scoreText, text);
     }
 
-    private void SetTargetText() {
-        string text = "Target: " + GameInfo.GetTarget();
-        SetText(GameUObject.targetText, text);
+    private void SetLivesText() {
+        string text = "Lives:\t" + _lives;
+        SetText(GameUObject.livesText, text);
     }
 
-    private void SetLivesText() {
-        string text = "Lives: " + _lives;
-        SetText(GameUObject.livesText, text);
+    public void SetFloorsText(int floors) {
+        string text = "Floors:\t" + floors;
+        SetText(GameUObject.floorsText, text);
+    }
+
+    private void SetLevelText() {
+        string text = "Level " + GameInfo.GetLevelText() + " (" + GameInfo.GetFloorsText() + " floors)";
+        SetText(GameUObject.levelText, text);
     }
 
     private void SetText(string key, string text) {

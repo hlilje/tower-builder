@@ -14,16 +14,21 @@
     };
 
 
-    public static string GetTarget() {
-        return Level < _FloorsPerLevel.Length ? _FloorsPerLevel[Level].ToString() : "Inf";
+    public static string GetLevelText() {
+        int numLevels = _FloorsPerLevel.Length;
+        return Level < numLevels ? (Level + 1).ToString() + '/' + numLevels : "Infinite";
     }
 
-    public static bool ShouldSpawnRoof(int floor) {
+    public static string GetFloorsText() {
+        return Level < _FloorsPerLevel.Length ? _FloorsPerLevel[Level].ToString() : "Infinite";
+    }
+
+    public static bool ShouldSpawnRoof(int floors) {
         if (Level >= _FloorsPerLevel.Length) {
             return false;
         }
 
-        return floor >= _FloorsPerLevel[Level];
+        return floors >= _FloorsPerLevel[Level];
     }
 
     public static void Reset() {
