@@ -37,6 +37,5 @@ public static class GameKey {
     public static readonly KeyCode cameraFree = KeyCode.F;
 
     public static readonly KeyCode debug = KeyCode.D;
-    public static readonly KeyCode pause = KeyCode.P;
     public static readonly KeyCode blockSpawn = KeyCode.Space;
 }

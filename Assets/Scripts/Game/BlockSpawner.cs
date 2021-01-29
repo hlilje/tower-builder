@@ -15,7 +15,6 @@ public class BlockSpawner : MonoBehaviour {
     private float _targetHeight = 0.0f;
     private float _currentCooldown = 0.0f;
     private int _floors = 0;
-    private bool _paused = false;
     private bool _useRoofBlock = false;
 
 
@@ -68,23 +67,17 @@ public class BlockSpawner : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetKeyDown(GameKey.pause)) {
-            _paused = !_paused;
-        }
+        _currentCooldown -= Time.deltaTime;
+        _currentCooldown = Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
 
-        if (!_paused) {
-            _currentCooldown -= Time.deltaTime;
-            _currentCooldown = Mathf.Clamp(_currentCooldown, 0.0f, _currentCooldown);
-
-            UpdateMovement();
-        }
+        UpdateMovement();
 
         if (Input.GetKeyDown(GameKey.blockSpawn)) {
             GameController gameController = GameObject.Find(GameUObject.game).GetComponent<GameController>();
             bool debug = gameController.IsDebug;
             bool gameOver = gameController.GameOver;
             bool waiting = _currentCooldown > 0.0f || _targetHeight > 0.0f;
-            if (_block && (debug || (!gameOver && !_paused && !waiting) ) ) {
+            if (_block && (debug || (!gameOver && !waiting) ) ) {
                 ReleaseBlock();
             }
         }
