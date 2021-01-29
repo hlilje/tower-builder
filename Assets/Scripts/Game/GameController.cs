@@ -39,15 +39,14 @@ public class GameController : MonoBehaviour {
         Debug.Log("Lost life");
 
         if (_lives == 0) {
-            string text = "GAME OVER\nScore: " + _score;
-            SetText(GameUObject.notificationText, text);
-            _gameOver = true;
+            EndGame();
         }
     }
 
 
     private void Start() {
         SetText(GameUObject.notificationText, "");
+        SetHighScoreText();
         SetScoreText();
         SetLivesText();
 
@@ -77,6 +76,21 @@ public class GameController : MonoBehaviour {
         }
     }
 
+
+    private void EndGame() {
+        string text = "GAME OVER\nScore: " + _score;
+        SetText(GameUObject.notificationText, text);
+
+        GameInfo.HighScore = Mathf.Max(GameInfo.HighScore, _score);
+        SetHighScoreText();
+
+        _gameOver = true;
+    }
+
+    private void SetHighScoreText() {
+        string text = "High Score: " + GameInfo.HighScore;
+        SetText(GameUObject.highScoreText, text);
+    }
 
     private void SetScoreText() {
         string text = "Score: " + _score;
