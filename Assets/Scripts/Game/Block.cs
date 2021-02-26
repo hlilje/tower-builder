@@ -104,8 +104,9 @@ public class Block : MonoBehaviour {
 
         // Naive check to ensure balanced joints
         Vector3 collisionPosition = collision.transform.position;
-        float distance = Mathf.Abs(transform.position.x - collisionPosition.x);
-        if (distance > _halfWidth) {
+        float xDistance = Mathf.Abs(transform.position.x - collisionPosition.x);
+        float zDistance = Mathf.Abs(transform.position.z - collisionPosition.z);
+        if (xDistance > _halfWidth || zDistance > _halfWidth) {
             blockSpawner.OnBlockMissed(this);
             return;
         }
