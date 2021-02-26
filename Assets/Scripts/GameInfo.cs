@@ -3,7 +3,7 @@
     public static int Score { get; set; } = 0;
     public static int HighScore { get; set; } = 0;
 
-    private static int[] _FloorsPerLevel = {
+    private static readonly int[] _FloorsPerLevel = {
         5,
         10,
         15,
