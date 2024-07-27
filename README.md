@@ -1,3 +1,3 @@
-# Tower Bloxx Clone
+# Tower Builder
 
-This is a (simplified) Unity 3D clone of the old mobile game **Tower Bloxx**, made a test project for trying out Unity.
+This is a basic Unity 3D tower builder game heavily inspired by the old mobile game **Tower Bloxx**, made as a test project for trying out Unity.
